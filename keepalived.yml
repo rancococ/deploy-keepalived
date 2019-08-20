@@ -11,17 +11,6 @@ services:
     container_name: "keepalived.${PRODUCT_NAME}.${COMPANY_NAME}"
     hostname: "keepalived.${PRODUCT_NAME}.${COMPANY_NAME}"
     restart: "always"
-    environment:
-      - KEEPALIVED_INTERFACE=ens33
-      - KEEPALIVED_PASSWORD=abcd1234
-      - KEEPALIVED_PRIORITY=150
-      - KEEPALIVED_ROUTER_ID=51
-      - KEEPALIVED_UNICAST_PEERS="#PYTHON2BASH:['192.168.100.12','192.168.100.13','192.168.100.14']"
-      - KEEPALIVED_VIRTUAL_IPS="#PYTHON2BASH:['192.168.100.250']"
-      # KEEPALIVED_NOTIFY=/container/service/keepalived/assets/notify.sh
-      # KEEPALIVED_COMMAND_LINE_ARGUMENTS=--log-detail --dump-conf
-      # KEEPALIVED_STATE=MASTER or BACKUP
-      - KEEPALIVED_STATE=MASTER
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./volume/keepalived/conf/keepalived.conf:/usr/local/etc/keepalived/keepalived.conf:ro
