@@ -24,8 +24,10 @@ services:
       - KEEPALIVED_STATE=MASTER
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      #- ./volume/keepalived/conf/haproxy.cfg:/etc:ro
+      - ./volume/keepalived/conf/keepalived.conf:/usr/local/etc/keepalived/keepalived.conf:ro
     network_mode: "host"
+    extra_hosts:
+      - "keepalived.${PRODUCT_NAME}.${COMPANY_NAME}:${HOST_IP}"
     cap_add:
       - NET_ADMIN
       - NET_BROADCAST
