@@ -7,7 +7,7 @@ version: "2"
 services:
   # keepalived
   keepalived:
-    image: ${IMAGE_KEEPALIVED}
+    image: ${IMAGE_REPO}/${IMAGE_KEEPALIVED}
     container_name: "keepalived.${PRODUCT_NAME}.${COMPANY_NAME}"
     hostname: "keepalived.${PRODUCT_NAME}.${COMPANY_NAME}"
     restart: "always"
