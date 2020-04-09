@@ -7,18 +7,19 @@ version: "2"
 services:
   # keepalived
   keepalived:
-    image: ${IMAGE_REPO}/${IMAGE_KEEPALIVED}
+    image: "${IMAGE_KEEPALIVED}"
     container_name: "keepalived.${PRODUCT_NAME}.${COMPANY_NAME}"
     hostname: "keepalived.${PRODUCT_NAME}.${COMPANY_NAME}"
     restart: "always"
+    env_file:
+      - ./keepalived.env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./volume/keepalived/conf/keepalived.conf:/usr/local/etc/keepalived/keepalived.conf:ro
+      #- ./volume/keepalived/conf/keepalived.conf:/etc/keepalived/keepalived.conf:ro
     network_mode: "host"
     extra_hosts:
       - "keepalived.${PRODUCT_NAME}.${COMPANY_NAME}:${HOST_IP}"
     cap_add:
+      - NET_RAW
       - NET_ADMIN
       - NET_BROADCAST
-      - NET_RAW
-
