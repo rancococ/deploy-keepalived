@@ -157,9 +157,7 @@ fun_build() {
 
     chmod 744 "${build_home}/${product_name}"/*.sh
 
-    #tar -C "${build_home}" -czf "${base_dir}"/${product_name}-${product_version}.tgz "${product_name}"
-    cd "${build_home}/${product_name}"
-    tar -czf "${base_dir}"/${product_name}-${product_version}.tgz .[!.]* *
+    tar -C "${build_home}" -czf "${base_dir}"/${product_name}-${product_version}.tgz "${product_name}"
 
     \rm -rf "${build_home}"
 
