@@ -15,7 +15,7 @@ services:
       - ./keepalived.env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      #- ./volume/keepalived/conf/keepalived.conf:/etc/keepalived/keepalived.conf:ro
+      - ./volume/keepalived/conf/keepalived.conf:/etc/keepalived/keepalived.conf:ro
     network_mode: "host"
     extra_hosts:
       - "keepalived.${PRODUCT_NAME}.${COMPANY_NAME}:${HOST_IP}"

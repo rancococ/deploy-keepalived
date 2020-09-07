@@ -60,6 +60,11 @@ if [ -r "${base_dir}/.env" ]; then
         eval "$line";
     done < "${base_dir}/.env"
 fi
+if [ -r "${base_dir}/keepalived.env" ]; then
+    while read line; do
+        eval "$line";
+    done < "${base_dir}/keepalived.env"
+fi
 
 # args flag
 arg_help=
@@ -143,7 +148,26 @@ fun_install() {
     info "deploy application"
     "${base_dir}"/deploy.sh --init
     "${base_dir}"/deploy.sh --load="${base_dir}"/images.tgz
-    #"${base_dir}"/deploy.sh --deploy="${base_dir}"/data.war
+
+    info "config keepalived.conf"
+    cp -f "${base_dir}"/volume/keepalived/conf/keepalived.tmpl "${base_dir}"/volume/keepalived/conf/keepalived.conf
+    sed -i "s/{KEEPALIVED_BIND_INTERFACE}/${KEEPALIVED_BIND_INTERFACE}/g"        "${base_dir}"/volume/keepalived/conf/keepalived.conf
+    sed -i "s/{KEEPALIVED_MASTER_STATE}/${KEEPALIVED_MASTER_STATE}/g"            "${base_dir}"/volume/keepalived/conf/keepalived.conf
+    sed -i "s/{KEEPALIVED_BACKUP_STATE}/${KEEPALIVED_BACKUP_STATE}/g"            "${base_dir}"/volume/keepalived/conf/keepalived.conf
+    sed -i "s/{KEEPALIVED_VIRTUAL_ROUTER_ID}/${KEEPALIVED_VIRTUAL_ROUTER_ID}/g"  "${base_dir}"/volume/keepalived/conf/keepalived.conf
+    sed -i "s/{KEEPALIVED_MASTER_PRIORITY}/${KEEPALIVED_MASTER_PRIORITY}/g"      "${base_dir}"/volume/keepalived/conf/keepalived.conf
+    sed -i "s/{KEEPALIVED_BACKUP_PRIORITY}/${KEEPALIVED_BACKUP_PRIORITY}/g"      "${base_dir}"/volume/keepalived/conf/keepalived.conf
+    sed -i "s/{KEEPALIVED_MASTER_IP}/${KEEPALIVED_MASTER_IP}/g"                  "${base_dir}"/volume/keepalived/conf/keepalived.conf
+    sed -i "s/{KEEPALIVED_BACKUP_IP}/${KEEPALIVED_BACKUP_IP}/g"                  "${base_dir}"/volume/keepalived/conf/keepalived.conf
+    sed -i "/ens33:vip:/d"                                                       "${base_dir}"/volume/keepalived/conf/keepalived.conf
+    OLD_IFS="$IFS" && IFS="," && VIP_ARR=(${KEEPALIVED_VIRTUAL_IPS}) && IFS="$OLD_IFS"
+    for idx in ${!VIP_ARR[@]}; do
+        OLD_IFS="$IFS" && IFS=":" && DEV_IP=(${VIP_ARR[${idx}]}) && IFS="$OLD_IFS"
+        if [ ${#DEV_IP[@]} -ne 2 ]; then
+            continue;
+        fi
+        sed -i "/ens33:vip$/ a \        ${DEV_IP[1]} dev ${DEV_IP[0]} label ${DEV_IP[0]}:vip:${idx}" "${base_dir}"/volume/keepalived/conf/keepalived.conf
+    done
 
     #info "setup application"
     #"${base_dir}"/compose.sh --setup
